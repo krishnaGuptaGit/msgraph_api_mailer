@@ -11,7 +11,6 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 - **Send Test with Attachment** button on settings page — sends a real `.xlsx` file to verify the full attachment pipeline end-to-end
 - **Connection status badge** — live green/red indicator on the settings page, auto-checked on page load without requiring a button click
 - **Large attachment support (up to 150 MB)** — attachments ≥ 3 MB are now uploaded via the Microsoft Graph upload session API (chunked PUT requests) instead of inline base64, bypassing the `sendMail` 3 MB payload limit
-- **Read receipt setting** — new admin option to request read receipts on all outgoing emails (recipients may decline)
 - **Attachment column in Email Log** — table and CSV export now show a paperclip indicator / "Yes"/"No" for emails that had attachments
 - **Changelog page** (`/local/msgraph_api_mailer/changelog.php`) — version history accessible from the settings page
 - `CHANGES.md` — this file

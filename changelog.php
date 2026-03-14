@@ -94,11 +94,6 @@ echo $OUTPUT->header();
         </li>
         <li>
           <span class="cl-type-new">NEW</span>
-          <strong>Read Receipt Option</strong> — New setting to request read receipts on all outgoing emails
-          (<em>recipients may decline</em>).
-        </li>
-        <li>
-          <span class="cl-type-new">NEW</span>
           <strong>Attachment indicator in Email Log</strong> — Email log table and CSV export now show whether
           each email had an attachment (paperclip icon / "Yes"/"No" column).
         </li>
