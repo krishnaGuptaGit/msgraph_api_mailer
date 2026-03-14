@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/msgraph_api_mailer/db" VERSION="2026031000" COMMENT="XMLDB file for MS Graph API Mailer plugin">
+    <TABLES>
+        <TABLE NAME="local_msgraph_api_mailer_log" COMMENT="MS Graph API Mailer email logs">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" COMMENT="Primary key"/>
+                <FIELD NAME="recipients" TYPE="text" COMMENT="JSON encoded recipient emails"/>
+                <FIELD NAME="subject" TYPE="text" COMMENT="Email subject"/>
+                <FIELD NAME="status" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" COMMENT="0=failed, 1=sent"/>
+                <FIELD NAME="has_attachment" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" COMMENT="1=email had attachment(s)"/>
+                <FIELD NAME="response" TYPE="text" COMMENT="API response"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" COMMENT="Timestamp"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key"/>
+            </KEYS>
+        </TABLE>
+    </TABLES>
+</XMLDB>

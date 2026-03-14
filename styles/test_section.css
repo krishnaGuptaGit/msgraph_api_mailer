@@ -1,0 +1,35 @@
+/* MS Graph Mailer Test Section Styles */
+
+#msgraph-test-buttons {
+    margin-top: 25px;
+    padding: 20px;
+    border: 2px solid #007bff;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+}
+
+#msgraph-test-buttons h4 {
+    margin: 0 0 15px 0;
+    color: #007bff;
+    font-weight: 600;
+}
+
+#msgraph-test-buttons .test-buttons {
+    margin-bottom: 15px;
+}
+
+#msgraph-test-buttons #check-permissions-btn,
+#msgraph-test-buttons #send-test-btn {
+    padding: 10px 20px;
+    font-weight: 500;
+}
+
+#msgraph-test-buttons #test-result {
+    margin-top: 15px;
+    padding: 10px;
+}
+
+/* Ensure the test email input is visible */
+#id_s_local_msgraph_mailer_test_email_temp {
+    max-width: 400px;
+}

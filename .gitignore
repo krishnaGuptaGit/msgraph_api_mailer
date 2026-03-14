@@ -1,0 +1,14 @@
+# AI assistant instructions — not for distribution
+CLAUDE.md
+
+# Internal test docs — not for distribution
+TEST_FUNCTIONALITY.md
+
+# OS / editor artifacts
+.DS_Store
+Thumbs.db
+*.swp
+*.orig
+
+# PHP temporary files
+*.log
