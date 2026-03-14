@@ -7,7 +7,7 @@
  *  - Send Test Email button
  *  - Send Test with Attachment button
  *
- * @package    local_msgraph_api_mailer
+ * @module     local_msgraph_api_mailer/tester
  * @copyright  2024
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
