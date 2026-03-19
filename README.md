@@ -75,7 +75,6 @@ The **Core Patch Status** badge at the top of the page shows whether the patch i
 
 - **SMTP replacement** — intercepts all Moodle emails (notifications, assignments, forum posts, password resets, scheduled reports, etc.) and routes them via Graph API
 - **Attachment support** — files up to 150 MB via chunked upload session; automatic MIME detection and extension correction for Moodle temp files
-- **Read receipt option** — optionally request read receipts on all outgoing emails
 - **Email log viewer** — searchable, filterable log of every sent/failed email with CSV export and attachment indicator
 - **Connection status badge** — live green/red indicator on the settings page, auto-checked on load
 - **Test tools** — Send Test Email and Send Test with Attachment buttons directly on the settings page
@@ -126,7 +125,6 @@ The **Core Patch Status** badge at the top of the page shows whether the patch i
 | Sender Display Name | e.g. `Moodle Notifications` (optional) |
 | Log sent emails | ✅ recommended |
 | Fallback to SMTP on failure | ✅ recommended |
-| Request read receipts | Optional — recipients may decline |
 
 3. Click **Save changes**
 
@@ -152,7 +150,6 @@ php local/msgraph_api_mailer/cli/test_send.php --to user@example.com
 | `sender_display_name` | — | Display name in the From field |
 | `log_emails` | On | Store each email result in the database |
 | `fallback_smtp` | On | Fall back to SMTP if Graph API fails |
-| `read_receipt_enabled` | Off | Request read receipts on all emails |
 
 ## Admin Pages
 
