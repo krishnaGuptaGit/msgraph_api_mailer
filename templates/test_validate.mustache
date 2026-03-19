@@ -1,0 +1,143 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_msgraph_api_mailer/test_validate
+
+    Test and Validate page template for MS Graph API Mailer.
+
+    @package    local_msgraph_api_mailer
+    @copyright  2026 Krishna Gupta
+    @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+}}
+<div class="row justify-content-center" style="max-width:860px; margin: 0 auto;">
+
+    {{! Configuration Status card }}
+    <div class="col-12">
+        <div class="msgraph-card">
+            <div class="msgraph-card-header">
+                <i class="fa fa-info-circle text-info"></i>
+                <h4>{{#str}} config_status, local_msgraph_api_mailer {{/str}}</h4>
+            </div>
+            <div class="msgraph-card-body">
+                <div class="d-flex flex-wrap" style="gap:8px;">
+                    <span class="config-badge {{enabled_badge_class}}">
+                        <i class="fa fa-{{enabled_icon}}-circle"></i>
+                        {{enabled_text}}
+                    </span>
+                    <span class="config-badge {{config_badge_class}}">
+                        <i class="fa fa-{{config_icon}}-circle"></i>
+                        {{config_text}}
+                    </span>
+                    {{#has_sender_email}}
+                    <span class="config-badge ok">
+                        <i class="fa fa-envelope"></i>
+                        {{sender_email}}
+                    </span>
+                    {{/has_sender_email}}
+                    {{#has_display_name}}
+                    <span class="config-badge ok">
+                        <i class="fa fa-user"></i>
+                        {{sender_display_name}}
+                    </span>
+                    {{/has_display_name}}
+                    {{^has_display_name}}
+                    <span class="config-badge warn">
+                        <i class="fa fa-user-o"></i>
+                        {{sender_display_name_not_set}}
+                    </span>
+                    {{/has_display_name}}
+                </div>
+                {{#not_configured}}
+                <div class="alert alert-warning mt-3 mb-0">
+                    {{missing_config_msg}}
+                    <a href="{{settings_url}}" class="alert-link">{{go_to_settings}}</a>
+                </div>
+                {{/not_configured}}
+            </div>
+        </div>
+    </div>
+
+    {{! Check Permissions card }}
+    <div class="col-12">
+        <div class="msgraph-card">
+            <div class="msgraph-card-header">
+                <i class="fa fa-plug text-primary"></i>
+                <h4>{{#str}} connection_status, local_msgraph_api_mailer {{/str}}</h4>
+            </div>
+            <div class="msgraph-card-body">
+                <p class="text-muted mb-3">
+                    {{#str}} connection_status_desc, local_msgraph_api_mailer {{/str}}
+                </p>
+                <button type="button" id="check-permissions-btn" class="btn btn-primary"
+                    {{#button_disabled}}disabled{{/button_disabled}}>
+                    <i class="fa fa-check-circle"></i>
+                    {{#str}} check_permissions_btn, local_msgraph_api_mailer {{/str}}
+                </button>
+                <div id="permission-result"></div>
+            </div>
+        </div>
+    </div>
+
+    {{! Send Test Email card }}
+    <div class="col-12">
+        <div class="msgraph-card">
+            <div class="msgraph-card-header">
+                <i class="fa fa-envelope text-primary"></i>
+                <h4>{{#str}} send_test_email, local_msgraph_api_mailer {{/str}}</h4>
+            </div>
+            <div class="msgraph-card-body">
+                <p class="text-muted mb-3">
+                    {{#str}} send_test_email_desc, local_msgraph_api_mailer {{/str}}
+                </p>
+                <div class="mb-3">
+                    <label for="test-email-input" class="form-label">
+                        <strong>{{#str}} recipient_email, local_msgraph_api_mailer {{/str}}</strong>
+                    </label>
+                    <input type="email" id="test-email-input" class="form-control mb-2"
+                        placeholder="user@example.com" style="max-width:420px;"
+                        {{#button_disabled}}disabled{{/button_disabled}}>
+                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                        <button type="button" id="send-test-btn" class="btn btn-primary"
+                            {{#button_disabled}}disabled{{/button_disabled}}>
+                            <i class="fa fa-paper-plane"></i>
+                            {{#str}} send_test_email_btn, local_msgraph_api_mailer {{/str}}
+                        </button>
+                        <button type="button" id="send-test-attachment-btn" class="btn btn-secondary"
+                            {{#button_disabled}}disabled{{/button_disabled}}>
+                            <i class="fa fa-paperclip"></i>
+                            {{#str}} send_test_with_attachment_btn, local_msgraph_api_mailer {{/str}}
+                        </button>
+                    </div>
+                </div>
+                <div id="email-result"></div>
+            </div>
+        </div>
+    </div>
+
+    {{! Navigation }}
+    <div class="col-12 mb-4" style="display:flex; gap:8px; flex-wrap:wrap;">
+        <a href="{{settings_url}}" class="btn btn-secondary">
+            <i class="fa fa-arrow-left"></i>
+            {{#str}} back_to_settings, local_msgraph_api_mailer {{/str}}
+        </a>
+        <a href="{{emaillog_url}}" class="btn btn-outline-secondary">
+            <i class="fa fa-list"></i>
+            {{#str}} view_email_logs, local_msgraph_api_mailer {{/str}}
+        </a>
+    </div>
+
+</div>

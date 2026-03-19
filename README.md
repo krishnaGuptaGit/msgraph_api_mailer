@@ -2,6 +2,66 @@
 
 Route all Moodle outgoing emails through **Microsoft Graph API** instead of SMTP — bypassing common SMTP restrictions from hosting providers and enabling enterprise-grade email delivery via Microsoft 365.
 
+---
+
+## ⚠️ Important: This Plugin Modifies a Moodle Core File
+
+**Read this section before installing.**
+
+### What the plugin does to Moodle core
+
+To intercept **all** outgoing Moodle emails — including direct `email_to_user()` calls from any Moodle feature or third-party plugin — this plugin injects a small hook block into:
+
+```
+lib/phpmailer/moodle_phpmailer.php
+```
+
+There is no fully supported Moodle extension point that intercepts email at this level. The `message/output/email` subsystem only covers the Moodle messaging framework; it does not intercept direct `email_to_user()` calls from forum digests, enrolment notifications, password resets, and many other core and plugin features. Patching `moodle_phpmailer.php` is the only way to reliably intercept all outgoing email.
+
+### Lifecycle of the patch
+
+| Event | What happens |
+|---|---|
+| Plugin **installed** | `db/install.php` applies the patch immediately |
+| Plugin **uninstalled** | `db/uninstall.php` removes the patch and restores the original file |
+| **Moodle upgraded** (file overwritten) | A `core\hook\after_config` callback detects the missing patch on the very first page load after upgrade and re-applies it automatically |
+| Patch **fails** (read-only file) | The patch status is stored in plugin config and shown as a red warning on the plugin settings page |
+
+### Implications for your deployment type
+
+**Standard shared hosting / VM (writable Moodle root)**
+No special action needed. The patch is applied on install and automatically restored after upgrades.
+
+**Git-managed Moodle core**
+`lib/phpmailer/moodle_phpmailer.php` will appear as a modified file in `git status`. If you reset or pull Moodle core files without purging Moodle caches first, the plugin's `after_config` hook will restore the patch on the next page load. However, if you run `git checkout lib/phpmailer/moodle_phpmailer.php` deliberately, emails will stop being intercepted until the next page load triggers the re-patch.
+
+If you use `git stash`, automated deployments, or a policy that rejects core file modifications, you will need to explicitly allow this file to diverge, or pre-apply the patch as part of your deployment pipeline (see below).
+
+**Immutable containers (read-only Docker, Kubernetes with read-only mounts)**
+If `lib/phpmailer/moodle_phpmailer.php` is not writable at runtime, the patch cannot be applied or re-applied. The plugin will be installed but will not intercept any email. The settings page will show a red "Patch could not be applied: file is read-only" warning.
+
+In this case you must pre-patch the file in your container image build:
+
+```bash
+# From your Moodle root, after copying the plugin:
+php local/msgraph_api_mailer/cli/apply_patch.php
+```
+
+Or apply the patch as a step in your Dockerfile before setting the filesystem to read-only.
+
+**Deployment automation (Ansible, Capistrano, rsync deployments)**
+Ensure your deployment process does not overwrite `lib/phpmailer/moodle_phpmailer.php` from a clean Moodle source without also running the patch. The safest approach is to run `php admin/cli/upgrade.php` after each Moodle update; the `after_config` hook will restore the patch on the first web request after that.
+
+### Verifying the patch is active
+
+After install or upgrade, open the plugin settings page:
+
+**Site Administration → Plugins → Local plugins → MS Graph API Mailer**
+
+The **Core Patch Status** badge at the top of the page shows whether the patch is currently applied. A green badge means all outgoing email is being intercepted. A red badge means action is required — the specific reason is shown in the badge text.
+
+---
+
 ## Requirements
 
 | Requirement | Minimum |
@@ -157,27 +217,33 @@ php local/msgraph_api_mailer/cli/test_send.php --to user@example.com --subject "
 
 ```
 Moodle email_to_user()
-    └── PHPMailer::postSend()                     ← patched by plugin on install
-        └── local_msgraph_api_mailer_phpmailer_init($mail)    ← lib.php hook
-            ├── Extract recipients, subject, body, attachments
-            ├── graph_client::send_email()
-            │   ├── Attachments < 3 MB  → sendMail (inline base64)
-            │   └── Attachments ≥ 3 MB  → create draft → upload session → send
-            └── Log result to local_msgraph_api_mailer_log table
+    └── moodle_phpmailer::postSend()              ← lib/phpmailer/moodle_phpmailer.php
+        │                                            PATCHED by this plugin on install
+        └── get_plugins_with_function('phpmailer_init')   ← hook injected by patch
+            └── local_msgraph_api_mailer_phpmailer_init($mail)    ← lib.php
+                ├── Extract recipients, subject, body, attachments
+                ├── graph_client::send_email()
+                │   ├── Attachments < 3 MB  → sendMail (inline base64)
+                │   └── Attachments ≥ 3 MB  → create draft → upload session → send
+                └── Log result to local_msgraph_api_mailer_log table
 ```
 
-**Key classes:**
+The patch adds exactly one block to `postSend()` — a `get_plugins_with_function()` call that invokes any registered `phpmailer_init` callbacks before falling through to the standard SMTP send. This is the same mechanism that existed in Moodle 4.x and earlier. The plugin restores it because Moodle 5.x removed it.
+
+**Key files:**
 
 | File | Purpose |
 |------|---------|
-| `lib.php` | PHPMailer hook, log helper, phpmailer.php patch functions |
+| `lib/phpmailer/moodle_phpmailer.php` | **Moodle core file — modified by this plugin** |
+| `lib.php` | PHPMailer hook callback, log helper, patch apply/remove functions |
+| `db/install.php` | Applies the patch on plugin install |
+| `db/uninstall.php` | Removes the patch on plugin uninstall |
 | `classes/api/graph_client.php` | OAuth2 token + Graph API calls + attachment splitting |
-| `classes/admin/configtext_placeholder.php` | Custom admin settings with placeholder + required-field validation |
-| `classes/hook/after_config_callbacks.php` | Re-applies phpmailer.php patch after Moodle upgrades |
+| `classes/hook/after_config_callbacks.php` | Detects and re-applies the patch after Moodle upgrades |
 
 ## Moodle 5.x Compatibility
 
-Moodle 5.x removed the `phpmailer_init` plugin callback from `moodle_phpmailer.php`. This plugin **patches** that file on install to restore the callback, and removes the patch on uninstall. The patch is automatically re-applied via a `core\hook\after_config` callback if a Moodle upgrade overwrites the file.
+Moodle 5.x removed the `phpmailer_init` plugin callback from `moodle_phpmailer.php`. This plugin patches that file on install to restore the callback. See the [⚠️ Important section](#️-important-this-plugin-modifies-a-moodle-core-file) at the top of this document for the full lifecycle and deployment implications.
 
 ## Building JavaScript
 

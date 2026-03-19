@@ -42,14 +42,29 @@ class after_config_callbacks {
         global $CFG;
 
         $filepath = $CFG->dirroot . '/lib/phpmailer/moodle_phpmailer.php';
+
         if (!is_readable($filepath)) {
-            return;
+            $newstatus = 'not_readable';
+        } else {
+            $content = file_get_contents($filepath);
+            if (strpos($content, "get_plugins_with_function('phpmailer_init')") !== false) {
+                $newstatus = 'ok';
+            } else {
+                // Patch is missing — attempt to re-apply (e.g. after a Moodle upgrade).
+                require_once($CFG->dirroot . '/local/msgraph_api_mailer/lib.php');
+                $result    = local_msgraph_api_mailer_apply_phpmailer_patch();
+                $newstatus = match ($result) {
+                    'ok', 'already_patched' => 'reapplied',
+                    'not_writable'          => 'failed_readonly',
+                    'anchor_not_found'      => 'failed_anchor',
+                    default                 => 'failed_unknown',
+                };
+            }
         }
 
-        $content = file_get_contents($filepath);
-        if (strpos($content, "get_plugins_with_function('phpmailer_init')") === false) {
-            require_once($CFG->dirroot . '/local/msgraph_api_mailer/lib.php');
-            local_msgraph_api_mailer_apply_phpmailer_patch();
+        // Only write to DB when the status changes to avoid unnecessary writes on every request.
+        if ($newstatus !== get_config('local_msgraph_api_mailer', 'patch_status')) {
+            set_config('patch_status', $newstatus, 'local_msgraph_api_mailer');
         }
     }
 }

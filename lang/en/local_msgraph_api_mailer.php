@@ -24,6 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['arch_desc'] = 'This plugin intercepts all Moodle outgoing emails — including direct email_to_user() calls from any feature or plugin — by injecting a hook into lib/phpmailer/moodle_phpmailer.php. The patch is applied on install, removed on uninstall, and automatically re-applied if a Moodle upgrade overwrites the file. On immutable deployments (read-only Docker containers, Git-managed Moodle core, deployment automation) the file may not be writable at runtime; in those environments the patch must be applied as part of your deployment pipeline. The current patch status is shown below.';
+$string['arch_heading'] = 'How This Plugin Intercepts Email';
 $string['back_to_settings'] = 'Back to Settings';
 $string['changelog_desc'] = 'Version history for MS Graph API Mailer';
 $string['changelog_title'] = 'Changelog';
@@ -34,6 +36,7 @@ $string['client_id'] = 'Client ID';
 $string['client_id_desc'] = 'Application (client) ID from Azure AD';
 $string['client_secret'] = 'Client Secret';
 $string['client_secret_desc'] = 'Client secret from Azure AD';
+$string['client_secret_placeholder'] = 'Enter your Azure AD client secret value';
 $string['config_complete'] = 'All Azure settings configured';
 $string['config_incomplete'] = 'Azure settings incomplete';
 $string['config_status'] = 'Configuration Status';
@@ -50,16 +53,13 @@ $string['email_sent_failed'] = '&#10007; Failed to send test email.';
 $string['email_sent_success'] = '&#10003; Test email sent successfully!';
 $string['enabled'] = 'Enable MS Graph Mailer';
 $string['enabled_desc'] = 'Route all Moodle emails through Microsoft Graph API';
-$string['enabled_requires_config'] = 'Please fill in Azure Tenant ID, Client ID, Client Secret,' .
-    ' and Sender Email Address for enabling MS Graph API Mailer.';
+$string['enabled_requires_config'] = 'Please fill in Azure Tenant ID, Client ID, Client Secret, and Sender Email Address for enabling MS Graph API Mailer.';
 $string['error'] = 'Error';
 $string['fallback_smtp'] = 'Fallback to SMTP on failure';
 $string['fallback_smtp_desc'] = 'Use SMTP if Microsoft Graph API fails';
 $string['go_to_settings'] = 'Go to Settings';
 $string['large_attachment_mb'] = 'Large attachment threshold (MB)';
-$string['large_attachment_mb_desc'] = 'Attachments at or above this size (in MB) are uploaded via' .
-    ' the Microsoft Graph upload session API instead of inline base64,' .
-    ' which supports files up to 150 MB. Default: 3 MB.';
+$string['large_attachment_mb_desc'] = 'Attachments at or above this size (in MB) are uploaded via the Microsoft Graph upload session API instead of inline base64, which supports files up to 150 MB. Default: 3 MB.';
 $string['log_btn_clear'] = 'Clear';
 $string['log_btn_export'] = 'Export CSV';
 $string['log_btn_filter'] = 'Filter';
@@ -82,22 +82,36 @@ $string['log_status_sent'] = 'Sent';
 $string['log_subject_placeholder'] = 'Search subject...';
 $string['missing_config'] = 'Please configure all Azure settings before testing.';
 $string['open_test_page'] = 'Open Test & Validate Page';
+$string['patch_status_failed_anchor'] = '&#10007; Patch failed: Moodle has changed the structure of lib/phpmailer/moodle_phpmailer.php. Emails are NOT being intercepted. Please update the MS Graph API Mailer plugin or raise an issue with the developer.';
+$string['patch_status_failed_readonly'] = '&#10007; Patch could not be applied: lib/phpmailer/moodle_phpmailer.php is read-only. Emails are NOT being intercepted. This is expected on immutable deployments (read-only Docker containers, etc.). You must make the file writable or pre-apply the patch in your deployment pipeline.';
+$string['patch_status_failed_unknown'] = '&#10007; Patch failed for an unknown reason. Emails may NOT be intercepted. Check that lib/phpmailer/moodle_phpmailer.php is writable and reload this page.';
+$string['patch_status_label'] = 'Core Patch Status';
+$string['patch_status_not_readable'] = '&#10007; lib/phpmailer/moodle_phpmailer.php is not readable. Patch status cannot be determined. Emails may NOT be intercepted.';
+$string['patch_status_ok'] = '&#10003; Patch is applied — all outgoing Moodle email is being intercepted by this plugin.';
+$string['patch_status_reapplied'] = '&#10003; Patch was re-applied automatically (likely after a Moodle upgrade). All outgoing email is being intercepted.';
+$string['patch_status_unknown'] = 'Patch status not yet determined. It will be checked on the next page load.';
 $string['permission_check_failed'] = '&#10007; Connection failed. Please check your credentials and Azure AD permissions.';
 $string['permission_check_success'] = '&#10003; Connection successful! Mail.Send permission is enabled.';
 $string['plugin_disabled'] = 'Plugin Disabled';
 $string['plugin_enabled'] = 'Plugin Enabled';
 $string['pluginname'] = 'MS Graph API Mailer';
+$string['privacy:metadata:local_msgraph_api_mailer_log'] = 'The MS Graph API Mailer plugin stores a log of every outbound email it processes. Each row includes the recipient addresses and subject, which may constitute personal data.';
+$string['privacy:metadata:local_msgraph_api_mailer_log:has_attachment'] = 'Whether the email included one or more file attachments.';
+$string['privacy:metadata:local_msgraph_api_mailer_log:recipients'] = 'The JSON-encoded list of recipient email addresses for the outbound email.';
+$string['privacy:metadata:local_msgraph_api_mailer_log:response'] = 'The raw response returned by the Microsoft Graph API for this email.';
+$string['privacy:metadata:local_msgraph_api_mailer_log:status'] = 'Whether the email was delivered successfully (1) or failed (0).';
+$string['privacy:metadata:local_msgraph_api_mailer_log:subject'] = 'The subject line of the outbound email.';
+$string['privacy:metadata:local_msgraph_api_mailer_log:timecreated'] = 'The Unix timestamp at which this log entry was created.';
+$string['quick_test_desc'] = 'Quick test from this page:';
 $string['recipient_email'] = 'Recipient Email Address';
 $string['send_test_email'] = 'Send Test Email';
 $string['send_test_email_btn'] = 'Send Test Email';
 $string['send_test_email_desc'] = 'Send a test email to verify the complete email delivery pipeline.';
 $string['send_test_with_attachment_btn'] = 'Send Test with Attachment';
 $string['sender_display_name'] = 'Sender Display Name';
-$string['sender_display_name_desc'] = 'Display name shown to recipients in the From field' .
-    ' (e.g. "Moodle Notifications"). Note: Outlook users in the same Microsoft 365 organisation' .
-    ' may see the Azure AD account name instead - test by sending to an external address' .
-    ' (Gmail, etc.) to confirm it is working.';
+$string['sender_display_name_desc'] = 'Display name shown to recipients in the From field (e.g. "Moodle Notifications"). Note: Outlook users in the same Microsoft 365 organisation may see the Azure AD account name instead - test by sending to an external address (Gmail, etc.) to confirm it is working.';
 $string['sender_display_name_not_set'] = 'No display name set';
+$string['sender_display_name_placeholder'] = 'Moodle Notifications';
 $string['sender_email'] = 'Sender Email Address';
 $string['sender_email_desc'] = 'Email address from Microsoft 365 that will send emails';
 $string['settings_saved'] = 'Settings saved successfully';

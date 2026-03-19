@@ -25,8 +25,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component   = 'local_msgraph_api_mailer';
-$plugin->release     = '1.1.4';
-$plugin->version     = 2026031503;
+$plugin->release     = '1.1.6';
+$plugin->version     = 2026031900;
 $plugin->requires    = 2023100900; // Moodle 5.1.
 $plugin->maturity    = 300; // MATURITY_STABLE.
 $plugin->dependencies = [];

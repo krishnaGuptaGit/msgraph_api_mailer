@@ -76,21 +76,16 @@ class graph_client {
             . '&client_secret=' . rawurlencode($this->clientsecret)
             . '&scope='         . rawurlencode('https://graph.microsoft.com/.default');
 
-        $ch = curl_init($url);
-        curl_setopt_array($ch, [
-            CURLOPT_POST           => 1,
-            CURLOPT_POSTFIELDS     => $postdata,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HTTPHEADER     => [
+        $curl     = new \curl(['proxy' => true]);
+        $response = $curl->post($url, $postdata, [
+            'CURLOPT_HTTPHEADER' => [
                 'Content-Type: application/x-www-form-urlencoded',
                 'Content-Length: ' . strlen($postdata),
             ],
-            CURLOPT_TIMEOUT        => 30,
+            'CURLOPT_TIMEOUT'    => 30,
         ]);
-        $response = curl_exec($ch);
-        $httpcode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $error    = curl_error($ch);
-        curl_close($ch);
+        $httpcode = (int) $curl->get_info()['http_code'];
+        $error    = $curl->error;
 
         if ($httpcode !== 200) {
             throw new \Exception(
@@ -358,29 +353,25 @@ class graph_client {
         // Upload in chunks — no Authorization header needed (URL already contains credentials).
         $total  = $attachment['size'];
         $offset = 0;
+        $curl   = new \curl(['proxy' => true]);
 
         while ($offset < $total) {
             $chunk    = substr($attachment['content'], $offset, self::UPLOAD_CHUNK_SIZE);
             $chunklen = strlen($chunk);
             $end      = $offset + $chunklen - 1;
 
-            $ch = curl_init($uploadurl);
-            curl_setopt_array($ch, [
-                CURLOPT_CUSTOMREQUEST  => 'PUT',
-                CURLOPT_POSTFIELDS     => $chunk,
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_HTTPHEADER     => [
+            $resp     = $curl->request($uploadurl, [
+                'CURLOPT_CUSTOMREQUEST' => 'PUT',
+                'CURLOPT_POSTFIELDS'    => $chunk,
+                'CURLOPT_HTTPHEADER'    => [
                     'Content-Type: application/octet-stream',
                     'Content-Length: ' . $chunklen,
                     'Content-Range: bytes ' . $offset . '-' . $end . '/' . $total,
                 ],
-                CURLOPT_TIMEOUT        => 120,
+                'CURLOPT_TIMEOUT'       => 120,
             ]);
-
-            $resp     = curl_exec($ch);
-            $httpcode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            $curlerr  = curl_error($ch);
-            curl_close($ch);
+            $httpcode = (int) $curl->get_info()['http_code'];
+            $curlerr  = $curl->error;
 
             // 200 = chunk received (more expected), 201 = final chunk accepted.
             if ($httpcode !== 200 && $httpcode !== 201) {
@@ -416,19 +407,18 @@ class graph_client {
             $headers[] = 'Content-Length: ' . strlen($body);
         }
 
-        $ch = curl_init($url);
-        curl_setopt_array($ch, [
-            CURLOPT_CUSTOMREQUEST  => $method,
-            CURLOPT_POSTFIELDS     => $body !== '' ? $body : null,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HTTPHEADER     => $headers,
-            CURLOPT_TIMEOUT        => 60,
-        ]);
-
-        $resp     = curl_exec($ch);
-        $httpcode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $curlerr  = curl_error($ch);
-        curl_close($ch);
+        $curl    = new \curl(['proxy' => true]);
+        $options = [
+            'CURLOPT_CUSTOMREQUEST' => $method,
+            'CURLOPT_HTTPHEADER'    => $headers,
+            'CURLOPT_TIMEOUT'       => 60,
+        ];
+        if ($body !== '') {
+            $options['CURLOPT_POSTFIELDS'] = $body;
+        }
+        $resp     = $curl->request($url, $options);
+        $httpcode = (int) $curl->get_info()['http_code'];
+        $curlerr  = $curl->error;
 
         return ['body' => $resp, 'http_code' => $httpcode, 'error' => $curlerr];
     }

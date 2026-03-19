@@ -1,0 +1,413 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_msgraph_api_mailer/changelog
+
+    Changelog page template for MS Graph API Mailer.
+
+    @package    local_msgraph_api_mailer
+    @copyright  2026 Krishna Gupta
+    @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+}}
+<div style="max-width:860px; margin:0 auto;">
+
+    {{! Header card }}
+    <div class="cl-card">
+        <div class="cl-card-header">
+            <i class="fa fa-history text-primary"></i>
+            <h4>{{#str}} changelog_title, local_msgraph_api_mailer {{/str}}</h4>
+            <span class="cl-date">{{#str}} pluginname, local_msgraph_api_mailer {{/str}}</span>
+        </div>
+    </div>
+
+    {{! v1.1.6 }}
+    <div class="cl-card">
+        <div class="cl-card-header">
+            <span class="cl-badge-version">v1.1.6</span>
+            <h4>Moodle Plugin Directory Review &mdash; Full Compliance</h4>
+            <span class="cl-badge-latest">Latest</span>
+            <span class="cl-date">2026-03-19</span>
+        </div>
+        <div class="cl-body"><ul>
+            <li>
+                <span class="cl-type-new">NEW</span>
+                <strong>GitHub Actions CI</strong> &mdash;
+                Added <code>.github/workflows/ci.yml</code> with a full PHP 8.1&ndash;8.3
+                &times; Moodle 4.3&ndash;4.5 &times; pgsql/mariadb matrix using
+                <code>moodlehq/moodle-plugin-ci</code>.
+            </li>
+            <li>
+                <span class="cl-type-new">NEW</span>
+                <strong>Privacy API</strong> &mdash;
+                Implemented <code>classes/privacy/provider.php</code> with
+                <code>metadata\provider</code>, <code>plugin\provider</code>, and
+                <code>core_userlist_provider</code>. User data is matched by email address
+                against the JSON recipients field in the log table.
+            </li>
+            <li>
+                <span class="cl-type-new">NEW</span>
+                <strong>External Services API</strong> &mdash;
+                Replaced the legacy <code>ajax.php</code> endpoint with four proper Moodle
+                External Service functions in <code>classes/external/</code> and
+                <code>db/services.php</code>. All AJAX calls in AMD modules now use
+                <code>core/ajax</code> instead of <code>$.ajax()</code>.
+            </li>
+            <li>
+                <span class="cl-type-new">NEW</span>
+                <strong>Mustache templates &amp; Output API</strong> &mdash;
+                Converted <code>index.php</code>, <code>emaillog.php</code>, and
+                <code>changelog.php</code> from inline HTML to
+                <code>$OUTPUT->render_from_template()</code> with dedicated Mustache templates.
+                All inline <code>&lt;style&gt;</code> blocks moved to <code>styles.css</code>.
+            </li>
+            <li>
+                <span class="cl-type-fix">FIX</span>
+                <strong>Boilerplate headers</strong> &mdash;
+                Added standard Moodle GPL boilerplate to all CSS, AMD JavaScript source,
+                and Mustache template files.
+            </li>
+            <li>
+                <span class="cl-type-fix">FIX</span>
+                <strong>Lang string syntax</strong> &mdash;
+                Removed all string concatenation (<code>.</code>) and multi-line split
+                assignments from <code>lang/en/local_msgraph_api_mailer.php</code>.
+                All strings are now pure single-line assignments.
+            </li>
+            <li>
+                <span class="cl-type-fix">FIX</span>
+                <strong>Hard-coded strings</strong> &mdash;
+                Moved all hard-coded placeholder and label text in
+                <code>settings.php</code> to the language file.
+            </li>
+            <li>
+                <span class="cl-type-fix">FIX</span>
+                <strong>PARAM_RAW replaced</strong> &mdash;
+                Changed <code>PARAM_RAW</code> to <code>PARAM_TEXT</code> in
+                <code>configcheckbox_with_required.php</code>.
+            </li>
+            <li>
+                <span class="cl-type-fix">FIX</span>
+                <strong>Moodle <code>\curl</code> wrapper</strong> &mdash;
+                Replaced all three <code>curl_init()</code> usages in
+                <code>graph_client.php</code> with Moodle&rsquo;s <code>\curl</code> class,
+                which respects proxy settings and Moodle&rsquo;s security configuration.
+            </li>
+            <li>
+                <span class="cl-type-fix">FIX</span>
+                <strong>Core file patch &mdash; improved visibility</strong> &mdash;
+                The <code>lib/phpmailer/moodle_phpmailer.php</code> patch lifecycle is now
+                documented prominently in <code>README.md</code>. The settings page shows
+                a live <strong>Core Patch Status</strong> badge (green / amber / red) and
+                the <code>after_config</code> hook stores the patch result so failures are
+                immediately visible to administrators.
+            </li>
+            <li>
+                <span class="cl-type-fix">FIX</span>
+                <strong>AMD build files rebuilt</strong> &mdash;
+                <code>amd/build/index.min.js</code> and <code>amd/build/tester.min.js</code>
+                regenerated to match updated source files using <code>core/ajax</code>
+                and frankenstyle External Service method names.
+            </li>
+        </ul></div>
+    </div>
+
+    {{! v1.1.5 }}
+    <div class="cl-card">
+        <div class="cl-card-header">
+            <span class="cl-badge-version">v1.1.5</span>
+            <h4>Prechecker Compliance &mdash; Minor Fix</h4>
+            <span class="cl-badge-stable">Stable</span>
+            <span class="cl-date">2026-03-16</span>
+        </div>
+        <div class="cl-body"><ul>
+            <li>
+                <span class="cl-type-fix">FIX</span>
+                <strong>Inline comment capitalisation</strong> &mdash;
+                Six section comments in <code>changelog.php</code> used a lowercase
+                <code>v</code> prefix (e.g. <code>// v1.1.4 card.</code>). phpcs requires
+                inline comments to start with a capital letter, digit, or
+                <code>...</code> sequence. Changed to <code>// V1.x.x card.</code>.
+            </li>
+        </ul></div>
+    </div>
+
+    {{! v1.1.4 }}
+    <div class="cl-card">
+        <div class="cl-card-header">
+            <span class="cl-badge-version">v1.1.4</span>
+            <h4>Prechecker Compliance Release</h4>
+            <span class="cl-badge-stable">Stable</span>
+            <span class="cl-date">2026-03-15</span>
+        </div>
+        <div class="cl-body"><ul>
+            <li>
+                <span class="cl-type-fix">FIX</span>
+                <strong>Template-style PHP eliminated</strong> &mdash;
+                Converted <code>changelog.php</code>, <code>emaillog.php</code>, and
+                <code>index.php</code> from mixed HTML/PHP template style to pure PHP
+                <code>echo</code> output. Each <code>&lt;?php ?&gt;</code> block reopened
+                after a <code>?&gt;</code> was treated by phpcs as a new file section
+                requiring a docblock, producing 220 errors.
+            </li>
+            <li>
+                <span class="cl-type-fix">FIX</span>
+                <strong>Anonymous closures removed</strong> &mdash;
+                Replaced <code>array_filter()</code> closures in <code>emaillog.php</code>
+                with explicit <code>foreach</code> loops.
+            </li>
+            <li>
+                <span class="cl-type-fix">FIX</span>
+                <strong>Decorator comment lines</strong> &mdash;
+                Removed <code>// ---</code> separator lines in <code>lib.php</code> that
+                did not end with a full stop, exclamation mark, or question mark.
+            </li>
+        </ul></div>
+    </div>
+
+    {{! v1.1.3 }}
+    <div class="cl-card">
+        <div class="cl-card-header">
+            <span class="cl-badge-version">v1.1.3</span>
+            <h4>Prechecker Compliance Release</h4>
+            <span class="cl-badge-stable">Stable</span>
+            <span class="cl-date">2026-03-15</span>
+        </div>
+        <div class="cl-body"><ul>
+            <li>
+                <span class="cl-type-fix">FIX</span>
+                <strong>AJAX bootstrap</strong> &mdash;
+                Removed <code>ob_start()</code>/<code>ob_end_clean()</code> wrappers
+                around <code>config.php</code> inclusion in <code>ajax.php</code>.
+            </li>
+            <li>
+                <span class="cl-type-fix">FIX</span>
+                <strong>Unexpected MOODLE_INTERNAL guard</strong> &mdash;
+                Removed redundant <code>defined('MOODLE_INTERNAL') || die()</code>
+                from <code>lib.php</code>.
+            </li>
+            <li>
+                <span class="cl-type-fix">FIX</span>
+                <strong>Empty catch blocks</strong> &mdash;
+                Added <code>unset($e)</code> to silent catch blocks in
+                <code>lib.php</code>, <code>graph_mailer.php</code>, and
+                <code>email_observer.php</code>.
+            </li>
+            <li>
+                <span class="cl-type-fix">FIX</span>
+                <strong>Inline comment format</strong> &mdash;
+                Capitalised and punctuated all inline comments across multiple files.
+            </li>
+            <li>
+                <span class="cl-type-fix">FIX</span>
+                <strong>Multi-line define() call</strong> &mdash;
+                Restructured <code>define('LOCAL_MSGRAPH_API_MAILER_PATCH_REPLACEMENT', ...)</code>
+                so the opening parenthesis is the last character on its line.
+            </li>
+            <li>
+                <span class="cl-type-fix">FIX</span>
+                <strong>Lang strings alphabetically sorted</strong> &mdash;
+                Removed all section <code>//</code> comments and sorted every string key
+                in <code>lang/en/local_msgraph_api_mailer.php</code> alphabetically.
+            </li>
+            <li>
+                <span class="cl-type-fix">FIX</span>
+                <strong>CRLF line endings</strong> &mdash;
+                Converted Windows CRLF to Unix LF in
+                <code>configcheckbox_with_required.php</code> and
+                <code>configpassword_placeholder.php</code>.
+            </li>
+            <li>
+                <span class="cl-type-fix">FIX</span>
+                <strong>Blank lines at end of control structures</strong> &mdash;
+                Removed blank lines before closing braces in <code>lib.php</code>.
+            </li>
+        </ul></div>
+    </div>
+
+    {{! v1.1.2 }}
+    <div class="cl-card">
+        <div class="cl-card-header">
+            <span class="cl-badge-version">v1.1.2</span>
+            <h4>Bug Fix Release</h4>
+            <span class="cl-badge-stable">Stable</span>
+            <span class="cl-date">2026-03-15</span>
+        </div>
+        <div class="cl-body"><ul>
+            <li>
+                <span class="cl-type-fix">FIX</span>
+                <strong>PHP code visible on page</strong> &mdash;
+                Removed redundant <code>global $OUTPUT, $PAGE</code> declaration from
+                <code>changelog.php</code> that caused Moodle debug mode to display raw
+                PHP source in the page body.
+            </li>
+            <li>
+                <span class="cl-type-fix">FIX</span>
+                <strong>Em dash encoding</strong> &mdash;
+                Replaced multi-byte em dash character in
+                <code>$PAGE-&gt;set_title()</code> across all three page files with a
+                plain hyphen to prevent encoding issues on some server configurations.
+            </li>
+        </ul></div>
+    </div>
+
+    {{! v1.1.1 }}
+    <div class="cl-card">
+        <div class="cl-card-header">
+            <span class="cl-badge-version">v1.1.1</span>
+            <h4>Prechecker Compliance</h4>
+            <span class="cl-badge-stable">Stable</span>
+            <span class="cl-date">2026-03-15</span>
+        </div>
+        <div class="cl-body"><ul>
+            <li>
+                <span class="cl-type-fix">FIX</span>
+                <strong>Moodle prechecker compliance</strong> &mdash;
+                All PHP and JavaScript files now fully pass the Moodle plugins directory
+                prechecker: line length, inline comment punctuation, Bootstrap 5 classes,
+                and coding standard checks.
+            </li>
+        </ul></div>
+    </div>
+
+    {{! v1.1.0 }}
+    <div class="cl-card">
+        <div class="cl-card-header">
+            <span class="cl-badge-version">v1.1.0</span>
+            <h4>Feature Release</h4>
+            <span class="cl-badge-stable">Stable</span>
+            <span class="cl-date">2026-03-14</span>
+        </div>
+        <div class="cl-body"><ul>
+            <li>
+                <span class="cl-type-new">NEW</span>
+                <strong>Send Test with Attachment</strong> &mdash;
+                Settings page now has a dedicated button that sends a real
+                <code>.xlsx</code> test file to verify the full attachment pipeline.
+            </li>
+            <li>
+                <span class="cl-type-new">NEW</span>
+                <strong>Connection Status Badge</strong> &mdash;
+                Settings page auto-checks Azure connectivity on load and shows a live
+                green/red badge &mdash; no button click required.
+            </li>
+            <li>
+                <span class="cl-type-new">NEW</span>
+                <strong>Large Attachment Support (up to 150 MB)</strong> &mdash;
+                Attachments &ge; 3 MB are now uploaded via the Microsoft Graph upload
+                session API (chunked PUT) instead of inline base64, bypassing the
+                <code>sendMail</code> payload limit.
+            </li>
+            <li>
+                <span class="cl-type-new">NEW</span>
+                <strong>Attachment indicator in Email Log</strong> &mdash;
+                Email log table and CSV export now show whether each email had an
+                attachment (paperclip icon / &ldquo;Yes&rdquo;/&ldquo;No&rdquo; column).
+            </li>
+            <li>
+                <span class="cl-type-new">NEW</span>
+                <strong>Changelog page</strong> &mdash; This page.
+            </li>
+            <li>
+                <span class="cl-type-fix">FIX</span>
+                <strong>Attachment filename</strong> &mdash;
+                Was using <code>$attach[1]</code> (temp basename like
+                <code>tempup_XYZ</code>); now correctly uses <code>$attach[2]</code>
+                (PHPMailer display name).
+            </li>
+            <li>
+                <span class="cl-type-fix">FIX</span>
+                <strong>Attachment extension missing</strong> &mdash;
+                MIME type is now detected from in-memory file content (magic bytes +
+                OOXML ZIP marker search) instead of reopening the temp file. Extension
+                is automatically appended when missing.
+            </li>
+            <li>
+                <span class="cl-type-fix">FIX</span>
+                <strong>Uninstall error</strong> &mdash;
+                <code>db/uninstall.php</code> now <code>require_once</code>s
+                <code>lib.php</code> before calling patch-removal functions (Moodle
+                does not auto-include <code>lib.php</code> before uninstall hooks).
+            </li>
+        </ul></div>
+    </div>
+
+    {{! v1.0.0 }}
+    <div class="cl-card">
+        <div class="cl-card-header">
+            <span class="cl-badge-version">v1.0.0</span>
+            <h4>Initial Stable Release</h4>
+            <span class="cl-badge-stable">Stable</span>
+            <span class="cl-date">2026-03-13</span>
+        </div>
+        <div class="cl-body"><ul>
+            <li>
+                <span class="cl-type-new">NEW</span>
+                Route all Moodle outgoing emails through
+                <strong>Microsoft Graph API</strong> (replaces SMTP).
+            </li>
+            <li>
+                <span class="cl-type-new">NEW</span>
+                OAuth2 client credentials flow &mdash; token cached per request with
+                5-minute expiry buffer.
+            </li>
+            <li>
+                <span class="cl-type-new">NEW</span>
+                Respects Moodle&rsquo;s <strong>email diverting</strong> setting
+                (<code>$CFG-&gt;divertallemailsto</code>).
+            </li>
+            <li>
+                <span class="cl-type-new">NEW</span>
+                <strong>SMTP fallback</strong> &mdash; optional automatic fallback to
+                PHPMailer/SMTP on Graph API failure.
+            </li>
+            <li>
+                <span class="cl-type-new">NEW</span>
+                <strong>Email log viewer</strong> &mdash; searchable, filterable table
+                of all sent/failed emails with CSV export.
+            </li>
+            <li>
+                <span class="cl-type-new">NEW</span>
+                <strong>Test &amp; Validate page</strong> &mdash; Check Permissions
+                and Send Test Email from the admin UI.
+            </li>
+            <li>
+                <span class="cl-type-new">NEW</span>
+                <strong>Mandatory field validation</strong> &mdash; Cannot enable the
+                plugin without all Azure credentials filled in.
+            </li>
+            <li>
+                <span class="cl-type-new">NEW</span>
+                Moodle 5.x compatibility &mdash; <code>phpmailer_init</code> hook
+                restored via <code>moodle_phpmailer.php</code> patch (auto-applied on
+                install, auto-verified via <code>after_config</code> hook).
+            </li>
+        </ul></div>
+    </div>
+
+    {{! Navigation }}
+    <div class="mb-4" style="display:flex; gap:8px;">
+        <a href="{{settings_url}}" class="btn btn-secondary">
+            <i class="fa fa-arrow-left"></i>
+            {{#str}} back_to_settings, local_msgraph_api_mailer {{/str}}
+        </a>
+        <a href="{{emaillog_url}}" class="btn btn-outline-secondary">
+            <i class="fa fa-list"></i>
+            {{#str}} view_email_logs, local_msgraph_api_mailer {{/str}}
+        </a>
+    </div>
+
+</div>

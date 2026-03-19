@@ -37,6 +37,38 @@ if (!isset($hassiteconfig) || $hassiteconfig) {
     $settings = new admin_settingpage('local_msgraph_api_mailer', get_string('pluginname', 'local_msgraph_api_mailer'));
     $ADMIN->add('localplugins', $settings);
 
+    // Architectural notice — explains the core file patch before any configuration.
+    $settings->add(new admin_setting_heading(
+        'local_msgraph_api_mailer_arch_heading',
+        get_string('arch_heading', 'local_msgraph_api_mailer'),
+        get_string('arch_desc', 'local_msgraph_api_mailer')
+    ));
+
+    // Live patch status badge — reads the value stored by the after_config hook
+    // (which already ran earlier in this same request).
+    $patchstatus = get_config('local_msgraph_api_mailer', 'patch_status') ?: 'unknown';
+    $statusmap   = [
+        'ok'             => ['success', 'check-circle'],
+        'reapplied'      => ['warning', 'refresh'],
+        'failed_readonly'=> ['danger',  'times-circle'],
+        'failed_anchor'  => ['danger',  'times-circle'],
+        'failed_unknown' => ['danger',  'times-circle'],
+        'not_readable'   => ['danger',  'times-circle'],
+        'unknown'        => ['info',    'info-circle'],
+    ];
+    [$alerttype, $icon] = $statusmap[$patchstatus] ?? ['info', 'info-circle'];
+    $langkey = array_key_exists($patchstatus, $statusmap) ? 'patch_status_' . $patchstatus : 'patch_status_unknown';
+    $patchhtml = html_writer::div(
+        html_writer::tag('i', '', ['class' => 'fa fa-' . $icon . ' me-1']) .
+        get_string($langkey, 'local_msgraph_api_mailer'),
+        'alert alert-' . $alerttype . ' mt-2 mb-0'
+    );
+    $settings->add(new admin_setting_description(
+        'local_msgraph_api_mailer_patch_status',
+        get_string('patch_status_label', 'local_msgraph_api_mailer'),
+        $patchhtml
+    ));
+
     $settings->add(new configcheckbox_with_required(
         'local_msgraph_api_mailer/enabled',
         get_string('enabled', 'local_msgraph_api_mailer'),
@@ -71,7 +103,7 @@ if (!isset($hassiteconfig) || $hassiteconfig) {
         get_string('client_secret', 'local_msgraph_api_mailer'),
         get_string('client_secret_desc', 'local_msgraph_api_mailer'),
         '',
-        'Enter your Azure AD client secret value'
+        get_string('client_secret_placeholder', 'local_msgraph_api_mailer')
     ));
 
     $settings->add(new configtext_placeholder(
@@ -91,7 +123,7 @@ if (!isset($hassiteconfig) || $hassiteconfig) {
         '',
         PARAM_TEXT,
         null,
-        'Moodle Notifications'
+        get_string('sender_display_name_placeholder', 'local_msgraph_api_mailer')
     ));
 
     $settings->add(new admin_setting_configcheckbox(
@@ -159,7 +191,7 @@ if (!isset($hassiteconfig) || $hassiteconfig) {
             get_string('view_changelog', 'local_msgraph_api_mailer'),
             ['href' => $changelogpageurl->out(false), 'class' => 'btn btn-outline-secondary', 'target' => '_blank']
         ) .
-        html_writer::tag('p', 'Quick test from this page:', ['class' => 'mt-3 mb-1 text-muted small'])
+        html_writer::tag('p', get_string('quick_test_desc', 'local_msgraph_api_mailer'), ['class' => 'mt-3 mb-1 text-muted small'])
     ));
 
     // Inline AJAX buttons — only load JS when this exact settings page is rendered.

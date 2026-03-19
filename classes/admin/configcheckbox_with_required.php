@@ -76,7 +76,7 @@ class configcheckbox_with_required extends \admin_setting_configcheckbox {
             foreach ($this->requirednames as $fieldname) {
                 // Moodle POST key for a plugin setting is s_{plugin}_{name}.
                 $postkey = 's_' . str_replace('/', '_', $this->plugin) . '_' . $fieldname;
-                $value   = optional_param($postkey, '', PARAM_RAW);
+                $value   = optional_param($postkey, '', PARAM_TEXT);
 
                 // If the field was not submitted, fall back to the saved DB value.
                 if ($value === '') {

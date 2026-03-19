@@ -236,32 +236,42 @@ function local_msgraph_api_mailer_write_phpmailer(string $filepath, string $newc
  * Inject the phpmailer_init hook into moodle_phpmailer::postSend().
  * Safe to call multiple times — skips if already patched.
  *
- * @return bool True on success or already patched, false on failure.
+ * @return string 'ok'               Patch applied successfully.
+ *                'already_patched'  Patch marker already present; no action needed.
+ *                'not_readable'     File cannot be read.
+ *                'not_writable'     File is read-only (immutable deployment, etc.).
+ *                'anchor_not_found' Moodle changed postSend() — injection point missing.
  */
-function local_msgraph_api_mailer_apply_phpmailer_patch() {
+function local_msgraph_api_mailer_apply_phpmailer_patch(): string {
     global $CFG;
     $filepath = $CFG->dirroot . LOCAL_MSGRAPH_API_MAILER_PHPMAILER_REL;
 
-    if (!is_readable($filepath) || !is_writable($filepath)) {
-        return false;
+    if (!is_readable($filepath)) {
+        return 'not_readable';
     }
 
     $content = file_get_contents($filepath);
-    $ok      = true;
 
-    if (strpos($content, LOCAL_MSGRAPH_API_MAILER_PATCH_MARKER) === false) {
-        $patched = str_replace(
-            LOCAL_MSGRAPH_API_MAILER_PATCH_ANCHOR,
-            LOCAL_MSGRAPH_API_MAILER_PATCH_REPLACEMENT,
-            $content
-        );
-        $ok = ($patched !== $content);
-        if ($ok) {
-            local_msgraph_api_mailer_write_phpmailer($filepath, $patched);
-        }
+    if (strpos($content, LOCAL_MSGRAPH_API_MAILER_PATCH_MARKER) !== false) {
+        return 'already_patched';
     }
 
-    return $ok;
+    if (!is_writable($filepath)) {
+        return 'not_writable';
+    }
+
+    $patched = str_replace(
+        LOCAL_MSGRAPH_API_MAILER_PATCH_ANCHOR,
+        LOCAL_MSGRAPH_API_MAILER_PATCH_REPLACEMENT,
+        $content
+    );
+
+    if ($patched === $content) {
+        return 'anchor_not_found';
+    }
+
+    local_msgraph_api_mailer_write_phpmailer($filepath, $patched);
+    return 'ok';
 }
 
 /**

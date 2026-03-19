@@ -1,0 +1,203 @@
+/**
+ * This file is part of Moodle - http://moodle.org/
+ *
+ * Moodle is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Moodle is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Plugin-wide styles for MS Graph API Mailer.
+ *
+ * @package    local_msgraph_api_mailer
+ * @copyright  2026 Krishna Gupta
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/* MS Graph API Mailer — plugin-wide styles */
+
+/* Shared card layout */
+.msgraph-card {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .06);
+}
+
+.msgraph-card-header {
+    background: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    padding: 14px 20px;
+    border-radius: 8px 8px 0 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.msgraph-card-header h4 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+.msgraph-card-body {
+    padding: 20px;
+}
+
+/* Config / status badges (test-validate page) */
+.config-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: .85rem;
+    font-weight: 500;
+}
+
+.config-badge.ok   { background: #d4edda; color: #155724; }
+.config-badge.err  { background: #f8d7da; color: #721c24; }
+.config-badge.warn { background: #fff3cd; color: #856404; }
+
+#permission-result,
+#email-result {
+    margin-top: 14px;
+}
+
+/* Email log table badges */
+.log-badge-sent {
+    background: #d4edda;
+    color: #155724;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: .78rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.log-badge-failed {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: .78rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.log-response {
+    max-width: 260px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: .8rem;
+    color: #6c757d;
+    cursor: help;
+}
+
+/* Email log filter row */
+.filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: flex-end;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.filter-group label {
+    font-size: .8rem;
+    font-weight: 600;
+    margin: 0;
+    color: #495057;
+}
+
+/* Changelog cards */
+.cl-card {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    margin-bottom: 28px;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .06);
+    max-width: 860px;
+}
+
+.cl-card-header {
+    background: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    padding: 14px 22px;
+    border-radius: 8px 8px 0 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.cl-card-header h4 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.cl-badge-version {
+    background: #0078d4;
+    color: #fff;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: .78rem;
+    font-weight: 600;
+}
+
+.cl-badge-stable {
+    background: #28a745;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: .72rem;
+    font-weight: 600;
+}
+
+.cl-badge-latest {
+    background: #fd7e14;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: .72rem;
+    font-weight: 600;
+}
+
+.cl-body {
+    padding: 18px 22px;
+}
+
+.cl-body ul {
+    margin: 6px 0 0 0;
+    padding-left: 20px;
+}
+
+.cl-body ul li {
+    margin-bottom: 5px;
+    font-size: .9rem;
+    line-height: 1.5;
+}
+
+.cl-date {
+    font-size: .8rem;
+    color: #6c757d;
+    margin-left: auto;
+}
+
+.cl-type-new      { color: #0078d4; font-weight: 600; }
+.cl-type-fix      { color: #28a745; font-weight: 600; }
+.cl-type-improved { color: #6f42c1; font-weight: 600; }

@@ -30,6 +30,10 @@
  * @return bool True on success.
  */
 function xmldb_local_msgraph_api_mailer_install() {
-    local_msgraph_api_mailer_apply_phpmailer_patch();
+    global $CFG;
+    require_once($CFG->dirroot . '/local/msgraph_api_mailer/lib.php');
+    $result = local_msgraph_api_mailer_apply_phpmailer_patch();
+    $status = in_array($result, ['ok', 'already_patched']) ? 'ok' : $result;
+    set_config('patch_status', $status, 'local_msgraph_api_mailer');
     return true;
 }
