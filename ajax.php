@@ -1,21 +1,42 @@
 <?php
-define('AJAX_SCRIPT', true);
-ob_start();
-require_once(__DIR__ . '/../../config.php');
-ob_end_clean();
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once __DIR__ . '/lib.php';
+/**
+ * AJAX handler for MS Graph API Mailer admin actions.
+ *
+ * @package    local_msgraph_api_mailer
+ * @copyright  2026 Krishna Gupta
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+define('AJAX_SCRIPT', true);
+require_once(__DIR__ . '/../../config.php');
+
+require_once(__DIR__ . '/lib.php');
 
 header('Content-Type: application/json');
 
-// Require login and site config capability
+// Require login and site config capability.
 require_login();
 if (!has_capability('moodle/site:config', context_system::instance())) {
     echo json_encode(['success' => false, 'message' => 'Access denied']);
     die();
 }
 
-// Verify session key
+// Verify session key.
 if (!confirm_sesskey()) {
     echo json_encode(['success' => false, 'message' => 'Invalid session key']);
     die();
@@ -52,14 +73,17 @@ try {
 
 /**
  * Test OAuth2 token retrieval (verifies tenant/client credentials and Mail.Send permission).
+ *
+ * @package local_msgraph_api_mailer
+ * @return array Result array with 'success' and 'message' keys.
  */
 function check_graph_permissions() {
-    $tenant_id     = get_config('local_msgraph_api_mailer', 'tenant_id');
-    $client_id     = get_config('local_msgraph_api_mailer', 'client_id');
-    $client_secret = get_config('local_msgraph_api_mailer', 'client_secret');
-    $sender_email  = get_config('local_msgraph_api_mailer', 'sender_email');
+    $tenantid     = get_config('local_msgraph_api_mailer', 'tenant_id');
+    $clientid     = get_config('local_msgraph_api_mailer', 'client_id');
+    $clientsecret = get_config('local_msgraph_api_mailer', 'client_secret');
+    $senderemail  = get_config('local_msgraph_api_mailer', 'sender_email');
 
-    if (empty($tenant_id) || empty($client_id) || empty($client_secret) || empty($sender_email)) {
+    if (empty($tenantid) || empty($clientid) || empty($clientsecret) || empty($senderemail)) {
         return ['success' => false, 'message' => get_string('missing_config', 'local_msgraph_api_mailer')];
     }
 
@@ -70,15 +94,24 @@ function check_graph_permissions() {
         if ($result['success']) {
             return ['success' => true, 'message' => get_string('permission_check_success', 'local_msgraph_api_mailer')];
         }
-        return ['success' => false, 'message' => get_string('permission_check_failed', 'local_msgraph_api_mailer') . ' ' . $result['message']];
+        return [
+            'success' => false,
+            'message' => get_string('permission_check_failed', 'local_msgraph_api_mailer') . ' ' . $result['message'],
+        ];
     } catch (Exception $e) {
-        return ['success' => false, 'message' => get_string('permission_check_failed', 'local_msgraph_api_mailer') . ' ' . $e->getMessage()];
+        return [
+            'success' => false,
+            'message' => get_string('permission_check_failed', 'local_msgraph_api_mailer') . ' ' . $e->getMessage(),
+        ];
     }
 }
 
 /**
  * Lightweight connection status check for the auto-loading badge on the settings page.
  * Returns connected bool + short label instead of full message.
+ *
+ * @package local_msgraph_api_mailer
+ * @return array Result array with 'connected' and 'message' keys.
  */
 function get_graph_connection_status() {
     $result = check_graph_permissions();
@@ -90,6 +123,10 @@ function get_graph_connection_status() {
 
 /**
  * Send a test email (no attachment) via Graph API.
+ *
+ * @package local_msgraph_api_mailer
+ * @param string $email Recipient email address.
+ * @return array Result array with 'success' and 'message' keys.
  */
 function send_graph_test_email($email) {
     global $CFG;
@@ -98,10 +135,10 @@ function send_graph_test_email($email) {
         return ['success' => false, 'message' => get_string('test_email_address', 'local_msgraph_api_mailer') . ' is required'];
     }
 
-    $sender_email     = get_config('local_msgraph_api_mailer', 'sender_email');
-    $display_name_cfg = trim((string) get_config('local_msgraph_api_mailer', 'sender_display_name'));
+    $senderemail     = get_config('local_msgraph_api_mailer', 'sender_email');
+    $displaynamecfg  = trim((string) get_config('local_msgraph_api_mailer', 'sender_display_name'));
 
-    if (empty($sender_email)) {
+    if (empty($senderemail)) {
         return ['success' => false, 'message' => get_string('missing_config', 'local_msgraph_api_mailer')];
     }
 
@@ -109,8 +146,9 @@ function send_graph_test_email($email) {
     $body    = '<h2>Test Email</h2>
         <p>This is a test email sent via Microsoft Graph API from Moodle.</p>
         <p><strong>Plugin:</strong> MS Graph Mailer</p>
-        <p><strong>Sender Email:</strong> ' . htmlspecialchars($sender_email, ENT_QUOTES) . '</p>
-        <p><strong>Sender Display Name (configured):</strong> ' . ($display_name_cfg !== '' ? htmlspecialchars($display_name_cfg, ENT_QUOTES) : '<em>Not configured</em>') . '</p>
+        <p><strong>Sender Email:</strong> ' . htmlspecialchars($senderemail, ENT_QUOTES) . '</p>
+        <p><strong>Sender Display Name (configured):</strong> ' .
+        ($displaynamecfg !== '' ? htmlspecialchars($displaynamecfg, ENT_QUOTES) : '<em>Not configured</em>') . '</p>
         <p><strong>Moodle Version:</strong> ' . $CFG->release . '</p>
         <p><strong>PHP Version:</strong> ' . PHP_VERSION . '</p>
         <p><strong>Time:</strong> ' . date('Y-m-d H:i:s') . '</p>';
@@ -133,28 +171,35 @@ function send_graph_test_email($email) {
         ];
     } catch (Exception $e) {
         local_msgraph_api_mailer_log_record([$email], $subject, 0, $e->getMessage());
-        return ['success' => false, 'message' => get_string('email_sent_failed', 'local_msgraph_api_mailer') . ' ' . $e->getMessage()];
+        return [
+            'success' => false,
+            'message' => get_string('email_sent_failed', 'local_msgraph_api_mailer') . ' ' . $e->getMessage(),
+        ];
     }
 }
 
 /**
  * Send a test email WITH a real .xlsx attachment via Graph API.
  * The attachment is a temp file with no extension — exactly like Moodle scheduled reports.
+ *
+ * @package local_msgraph_api_mailer
+ * @param string $email Recipient email address.
+ * @return array Result array with 'success' and 'message' keys.
  */
 function send_graph_test_email_attachment($email) {
     if (empty($email)) {
         return ['success' => false, 'message' => get_string('test_email_address', 'local_msgraph_api_mailer') . ' is required'];
     }
 
-    $sender_email = get_config('local_msgraph_api_mailer', 'sender_email');
-    if (empty($sender_email)) {
+    $senderemail = get_config('local_msgraph_api_mailer', 'sender_email');
+    if (empty($senderemail)) {
         return ['success' => false, 'message' => get_string('missing_config', 'local_msgraph_api_mailer')];
     }
 
     // Build a minimal xlsx (ZIP + OOXML) in a temp file without extension.
     $tmpfile = build_test_xlsx();
     if (!$tmpfile) {
-        return ['success' => false, 'message' => 'Could not create test xlsx (ZipArchive required)'];
+        return ['success' => false, 'message' => 'Could not create test xlsx (ZipArchive required).'];
     }
 
     $subject = 'Test Email with Attachment — MS Graph Mailer';
@@ -169,9 +214,9 @@ function send_graph_test_email_attachment($email) {
         <p><strong>Sent:</strong> ' . date('Y-m-d H:i:s') . '</p>';
 
     // Mimic exactly what Moodle scheduler produces:
-    // - filepath = temp path without extension
-    // - filename  = display name without extension
-    // - mimetype  = application/octet-stream (mimeinfo result for extensionless file)
+    // - filepath = temp path without extension.
+    // - filename  = display name without extension.
+    // - mimetype  = application/octet-stream (mimeinfo result for extensionless file).
     $attachments = [[
         'filepath' => $tmpfile,
         'filename' => 'Test Report',
@@ -200,7 +245,10 @@ function send_graph_test_email_attachment($email) {
     } catch (Exception $e) {
         @unlink($tmpfile);
         local_msgraph_api_mailer_log_record([$email], $subject, 0, $e->getMessage(), 1);
-        return ['success' => false, 'message' => get_string('email_sent_failed', 'local_msgraph_api_mailer') . ' ' . $e->getMessage()];
+        return [
+            'success' => false,
+            'message' => get_string('email_sent_failed', 'local_msgraph_api_mailer') . ' ' . $e->getMessage(),
+        ];
     }
 }
 
@@ -208,7 +256,8 @@ function send_graph_test_email_attachment($email) {
  * Build a minimal valid .xlsx file in a temp path WITHOUT extension.
  * Simulates the temp files produced by Moodle's scheduled report delivery.
  *
- * @return string|false  Temp file path on success, false on failure.
+ * @package local_msgraph_api_mailer
+ * @return string|false Temp file path on success, false on failure.
  */
 function build_test_xlsx() {
     if (!class_exists('ZipArchive')) {
@@ -223,35 +272,50 @@ function build_test_xlsx() {
         return false;
     }
 
-    $zip->addFromString('[Content_Types].xml',
+    $zip->addFromString(
+        '[Content_Types].xml',
         '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' .
         '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' .
         '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' .
         '<Default Extension="xml" ContentType="application/xml"/>' .
-        '<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>' .
-        '<Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>' .
-        '</Types>');
+        '<Override PartName="/xl/workbook.xml"' .
+        ' ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>' .
+        '<Override PartName="/xl/worksheets/sheet1.xml"' .
+        ' ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>' .
+        '</Types>'
+    );
 
-    $zip->addFromString('_rels/.rels',
+    $zip->addFromString(
+        '_rels/.rels',
         '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' .
         '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' .
-        '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/>' .
-        '</Relationships>');
+        '<Relationship Id="rId1"' .
+        ' Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument"' .
+        ' Target="xl/workbook.xml"/>' .
+        '</Relationships>'
+    );
 
-    $zip->addFromString('xl/workbook.xml',
+    $zip->addFromString(
+        'xl/workbook.xml',
         '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' .
         '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"' .
         ' xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">' .
         '<sheets><sheet name="Test Report" sheetId="1" r:id="rId1"/></sheets>' .
-        '</workbook>');
+        '</workbook>'
+    );
 
-    $zip->addFromString('xl/_rels/workbook.xml.rels',
+    $zip->addFromString(
+        'xl/_rels/workbook.xml.rels',
         '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' .
         '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' .
-        '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/>' .
-        '</Relationships>');
+        '<Relationship Id="rId1"' .
+        ' Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet"' .
+        ' Target="worksheets/sheet1.xml"/>' .
+        '</Relationships>'
+    );
 
-    $zip->addFromString('xl/worksheets/sheet1.xml',
+    $zip->addFromString(
+        'xl/worksheets/sheet1.xml',
         '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' .
         '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>' .
         '<row r="1">' .
@@ -264,7 +328,8 @@ function build_test_xlsx() {
         '<c r="B2" t="inlineStr"><is><t>Sample Course</t></is></c>' .
         '<c r="C2" t="inlineStr"><is><t>Completed</t></is></c>' .
         '</row>' .
-        '</sheetData></worksheet>');
+        '</sheetData></worksheet>'
+    );
 
     $zip->close();
 

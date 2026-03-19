@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Admin text input with placeholder attribute support.
+ * Admin password input with placeholder attribute support.
  *
  * @package    local_msgraph_api_mailer
  * @copyright  2026 Krishna Gupta
@@ -25,37 +25,33 @@
 namespace local_msgraph_api_mailer\admin;
 
 /**
- * Admin text input with placeholder attribute support.
+ * Admin password input with placeholder attribute support.
  *
  * @package    local_msgraph_api_mailer
  * @copyright  2026 Krishna Gupta
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class configtext_placeholder extends \admin_setting_configtext {
+class configpassword_placeholder extends \admin_setting_configpasswordunmask {
     /** @var string Placeholder text shown inside the input field. */
     protected $placeholder;
 
     /**
      * Constructor.
      *
-     * @param string $name          Setting name.
-     * @param string $visiblename   Visible name shown in admin UI.
-     * @param string $description   Description text.
+     * @param string $name           Setting name.
+     * @param string $visiblename    Visible name shown in admin UI.
+     * @param string $description    Description text.
      * @param string $defaultsetting Default value.
-     * @param int    $paramtype     PARAM_* constant for validation.
-     * @param int|null $size        Input field size (null for default).
-     * @param string $placeholder   Placeholder text for the input.
+     * @param string $placeholder    Placeholder text for the input.
      */
     public function __construct(
         $name,
         $visiblename,
         $description,
         $defaultsetting,
-        $paramtype = PARAM_RAW,
-        $size = null,
         $placeholder = ''
     ) {
-        parent::__construct($name, $visiblename, $description, $defaultsetting, $paramtype, $size);
+        parent::__construct($name, $visiblename, $description, $defaultsetting);
         $this->placeholder = $placeholder;
     }
 

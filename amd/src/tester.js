@@ -22,14 +22,14 @@ define(['jquery', 'core/str'], function($, str) {
             var self = this;
 
             str.get_strings([
-                {key: 'check_permissions_btn',          component: 'local_msgraph_api_mailer'},
-                {key: 'send_test_email_btn',            component: 'local_msgraph_api_mailer'},
-                {key: 'test_email_address',             component: 'local_msgraph_api_mailer'},
-                {key: 'test_result',                    component: 'local_msgraph_api_mailer'},
-                {key: 'send_test_with_attachment_btn',  component: 'local_msgraph_api_mailer'},
-                {key: 'status_badge_checking',          component: 'local_msgraph_api_mailer'},
-                {key: 'connection_badge_connected',     component: 'local_msgraph_api_mailer'},
-                {key: 'connection_badge_disconnected',  component: 'local_msgraph_api_mailer'}
+                {key: 'check_permissions_btn', component: 'local_msgraph_api_mailer'},
+                {key: 'send_test_email_btn', component: 'local_msgraph_api_mailer'},
+                {key: 'test_email_address', component: 'local_msgraph_api_mailer'},
+                {key: 'test_result', component: 'local_msgraph_api_mailer'},
+                {key: 'send_test_with_attachment_btn', component: 'local_msgraph_api_mailer'},
+                {key: 'status_badge_checking', component: 'local_msgraph_api_mailer'},
+                {key: 'connection_badge_connected', component: 'local_msgraph_api_mailer'},
+                {key: 'connection_badge_disconnected', component: 'local_msgraph_api_mailer'}
             ]).then(function(s) {
                 self.strings = {
                     checkPermissions:        s[0],
@@ -41,7 +41,7 @@ define(['jquery', 'core/str'], function($, str) {
                     connected:               s[6],
                     disconnected:            s[7]
                 };
-                self.addTestSection();
+                return self.addTestSection();
             }).catch(function() {
                 self.strings = {
                     checkPermissions:       'Check Permissions',
@@ -66,19 +66,25 @@ define(['jquery', 'core/str'], function($, str) {
 
             var html =
                 '<div id="msgraph-test-buttons" class="msgraph-test-section"' +
-                ' style="margin-top:25px;padding:20px;border:2px solid #0078d4;border-radius:8px;background:#f8f9fa;">' +
+                ' style="margin-top:25px;padding:20px;border:2px solid #0078d4;' +
+                'border-radius:8px;background:#f8f9fa;">' +
 
-                // ── Connection status badge ─────────────────────────────────
-                '<div id="msgraph-status-row" style="margin-bottom:14px;display:flex;align-items:center;gap:10px;">' +
+                // Connection status badge.
+                '<div id="msgraph-status-row"' +
+                ' style="margin-bottom:14px;display:flex;align-items:center;gap:10px;">' +
                 '<strong style="font-size:.9rem;">Connection Status:</strong>' +
                 '<span id="msgraph-status-badge"' +
-                ' style="display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;font-size:.82rem;font-weight:600;background:#e9ecef;color:#495057;">' +
-                '<span id="msgraph-status-dot" style="width:8px;height:8px;border-radius:50%;background:#adb5bd;display:inline-block;"></span>' +
+                ' style="display:inline-flex;align-items:center;gap:5px;padding:4px 12px;' +
+                'border-radius:20px;font-size:.82rem;font-weight:600;' +
+                'background:#e9ecef;color:#495057;">' +
+                '<span id="msgraph-status-dot"' +
+                ' style="width:8px;height:8px;border-radius:50%;' +
+                'background:#adb5bd;display:inline-block;"></span>' +
                 '<span id="msgraph-status-text">' + self.strings.statusChecking + '</span>' +
                 '</span>' +
                 '</div>' +
 
-                // ── Action buttons ──────────────────────────────────────────
+                // Action buttons.
                 '<div class="test-buttons" style="margin-top:6px;display:flex;flex-wrap:wrap;gap:8px;">' +
                 '<button type="button" id="check-permissions-btn" class="btn btn-outline-primary btn-sm">' +
                 '<i class="fa fa-plug"></i> ' + self.strings.checkPermissions +
@@ -91,11 +97,11 @@ define(['jquery', 'core/str'], function($, str) {
                 '</button>' +
                 '</div>' +
 
-                // ── Result area ─────────────────────────────────────────────
+                // Result area.
                 '<div id="test-result" style="margin-top:12px;"></div>' +
                 '</div>';
 
-            // Insert after the test email input field
+            // Insert after the test email input field.
             var inserted = false;
             var $input = $('#id_s_local_msgraph_api_mailer_test_email_temp');
             if ($input.length) {
@@ -115,7 +121,7 @@ define(['jquery', 'core/str'], function($, str) {
 
             self.bindEvents();
 
-            // Auto-check connection status on load
+            // Auto-check connection status on load.
             self.refreshStatusBadge();
         },
 
@@ -163,8 +169,8 @@ define(['jquery', 'core/str'], function($, str) {
         setBadge: function(state) {
             var self = this;
             var $badge = $('#msgraph-status-badge');
-            var $dot   = $('#msgraph-status-dot');
-            var $text  = $('#msgraph-status-text');
+            var $dot = $('#msgraph-status-dot');
+            var $text = $('#msgraph-status-text');
 
             if (state === 'connected') {
                 $badge.css({background: '#d4edda', color: '#155724'});
@@ -198,11 +204,14 @@ define(['jquery', 'core/str'], function($, str) {
                     var msg = r.message || 'Unexpected response';
                     $result.html(r.success
                         ? '<div class="alert alert-success py-2">' + msg + '</div>'
-                        : '<div class="alert alert-danger py-2">'  + msg + '</div>');
+                        : '<div class="alert alert-danger py-2">' + msg + '</div>');
                     self.setBadge(r.success ? 'connected' : 'disconnected');
                 },
                 error: function(xhr) {
-                    $result.html('<div class="alert alert-danger py-2">Server error (HTTP ' + xhr.status + ')</div>');
+                    $result.html(
+                        '<div class="alert alert-danger py-2">Server error (HTTP ' +
+                        xhr.status + ')</div>'
+                    );
                     self.setBadge('disconnected');
                 }
             });
@@ -214,19 +223,25 @@ define(['jquery', 'core/str'], function($, str) {
          */
         sendTestEmail: function(withAttachment) {
             var $result = $('#test-result');
-            var email   = $('#id_s_local_msgraph_api_mailer_test_email_temp').val();
+            var email = $('#id_s_local_msgraph_api_mailer_test_email_temp').val();
 
             if (!email) {
-                $result.html('<div class="alert alert-warning py-2">Please enter a test email address in the field above.</div>');
+                $result.html(
+                    '<div class="alert alert-warning py-2">' +
+                    'Please enter a test email address in the field above.</div>'
+                );
                 return;
             }
             if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                $result.html('<div class="alert alert-warning py-2">Please enter a valid email address.</div>');
+                $result.html(
+                    '<div class="alert alert-warning py-2">' +
+                    'Please enter a valid email address.</div>'
+                );
                 return;
             }
 
-            var action  = withAttachment ? 'send_test_email_attachment' : 'send_test_email';
-            var label   = withAttachment ? 'Sending test email with attachment...' : 'Sending test email...';
+            var action = withAttachment ? 'send_test_email_attachment' : 'send_test_email';
+            var label = withAttachment ? 'Sending test email with attachment...' : 'Sending test email...';
             $result.html('<div class="alert alert-info py-2">' + label + '</div>');
 
             $.ajax({
@@ -237,10 +252,13 @@ define(['jquery', 'core/str'], function($, str) {
                 success: function(r) {
                     $result.html(r.success
                         ? '<div class="alert alert-success py-2">' + r.message + '</div>'
-                        : '<div class="alert alert-danger py-2">'  + r.message + '</div>');
+                        : '<div class="alert alert-danger py-2">' + r.message + '</div>');
                 },
                 error: function(xhr) {
-                    $result.html('<div class="alert alert-danger py-2">Server error (HTTP ' + xhr.status + ')</div>');
+                    $result.html(
+                        '<div class="alert alert-danger py-2">Server error (HTTP ' +
+                        xhr.status + ')</div>'
+                    );
                 }
             });
         }
