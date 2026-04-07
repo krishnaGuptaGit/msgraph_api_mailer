@@ -55,6 +55,7 @@ define(['jquery', 'core/ajax'], function($, Ajax) {
                     args: {}
                 }])[0].then(function(r) {
                     showResult('permission-result', r.success, r.message);
+                    return undefined;
                 }).catch(function(e) {
                     showResult('permission-result', false, e?.message ?? 'Error connecting to server.');
                 });
@@ -89,6 +90,7 @@ define(['jquery', 'core/ajax'], function($, Ajax) {
                     args: {email: email}
                 }])[0].then(function(r) {
                     showResult('email-result', r.success, r.message);
+                    return undefined;
                 }).catch(function(e) {
                     showResult('email-result', false, e?.message ?? 'Error connecting to server.');
                 });

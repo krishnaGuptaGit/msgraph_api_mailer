@@ -19,6 +19,37 @@
 
     Email log viewer template for MS Graph API Mailer.
 
+    Example context (json):
+    {
+        "action_url": "/local/msgraph_api_mailer/emaillog.php",
+        "filter_status_all_selected": true,
+        "filter_status_sent_selected": false,
+        "filter_status_failed_selected": false,
+        "filter_recipient": "",
+        "filter_subject": "",
+        "subject_placeholder": "Search subject...",
+        "filter_datefrom": "",
+        "filter_dateto": "",
+        "total": 42,
+        "export_url": "/local/msgraph_api_mailer/emaillog.php?export=1",
+        "has_records": true,
+        "records": [
+            {
+                "id": 1,
+                "recipients": "user@example.com",
+                "subject": "Test email",
+                "status_label": "Sent",
+                "status_badge_class": "log-badge-sent",
+                "has_attachment": false,
+                "response": "202 Accepted",
+                "timecreated": "2026-03-19 10:30:00"
+            }
+        ],
+        "paging_bar": "",
+        "settings_url": "/admin/settings.php?section=local_msgraph_api_mailer",
+        "test_url": "/local/msgraph_api_mailer/index.php"
+    }
+
     @package    local_msgraph_api_mailer
     @copyright  2026 Krishna Gupta
     @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -32,7 +63,7 @@
             <h4>{{#str}} log_filter_heading, local_msgraph_api_mailer {{/str}}</h4>
         </div>
         <div class="msgraph-card-body">
-            <form method="get" action="">
+            <form method="get" action="{{action_url}}">
                 <div class="filter-row">
 
                     <div class="filter-group">

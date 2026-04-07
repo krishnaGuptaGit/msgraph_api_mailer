@@ -161,7 +161,8 @@ define(['jquery', 'core/ajax', 'core/str'], function($, Ajax, str) {
                 args: {}
             }])[0].then((r) => {
                 this.setBadge(r.connected ? 'connected' : 'disconnected');
-            }).catch((_e) => {
+                return undefined;
+            }).catch(() => {
                 this.setBadge('disconnected');
             });
         },
@@ -173,8 +174,8 @@ define(['jquery', 'core/ajax', 'core/str'], function($, Ajax, str) {
          */
         setBadge: function(state) {
             const $badge = $('#msgraph-status-badge');
-            const $dot   = $('#msgraph-status-dot');
-            const $text  = $('#msgraph-status-text');
+            const $dot = $('#msgraph-status-dot');
+            const $text = $('#msgraph-status-text');
 
             if (state === 'connected') {
                 $badge.css({background: '#d4edda', color: '#155724'});
@@ -207,6 +208,7 @@ define(['jquery', 'core/ajax', 'core/str'], function($, Ajax, str) {
                     ? '<div class="alert alert-success py-2">' + msg + '</div>'
                     : '<div class="alert alert-danger py-2">' + msg + '</div>');
                 this.setBadge(r.success ? 'connected' : 'disconnected');
+                return undefined;
             }).catch((e) => {
                 $result.html('<div class="alert alert-danger py-2">' + (e?.message ?? 'Server error.') + '</div>');
                 this.setBadge('disconnected');
@@ -220,7 +222,7 @@ define(['jquery', 'core/ajax', 'core/str'], function($, Ajax, str) {
          */
         sendTestEmail: function(withAttachment) {
             const $result = $('#test-result');
-            const email   = $('#id_s_local_msgraph_api_mailer_test_email_temp').val();
+            const email = $('#id_s_local_msgraph_api_mailer_test_email_temp').val();
 
             if (!email) {
                 $result.html(
@@ -253,6 +255,7 @@ define(['jquery', 'core/ajax', 'core/str'], function($, Ajax, str) {
                 $result.html(r.success
                     ? '<div class="alert alert-success py-2">' + r.message + '</div>'
                     : '<div class="alert alert-danger py-2">' + r.message + '</div>');
+                return undefined;
             }).catch((e) => {
                 $result.html('<div class="alert alert-danger py-2">' + (e?.message ?? 'Server error.') + '</div>');
             });

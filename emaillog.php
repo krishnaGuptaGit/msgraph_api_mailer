@@ -28,7 +28,7 @@ require_login();
 require_capability('moodle/site:config', context_system::instance());
 
 // Filters.
-$filterstatus  = optional_param('status', -1, PARAM_INT);   // -1 = all, 0 = failed, 1 = sent.
+$filterstatus  = optional_param('status', -1, PARAM_INT);   // All = -1, failed = 0, sent = 1.
 $filterto      = optional_param('recipient', '', PARAM_TEXT);
 $filtersubject = optional_param('subject', '', PARAM_TEXT);
 $filterfrom    = optional_param('datefrom', '', PARAM_TEXT); // YYYY-MM-DD.
@@ -104,7 +104,10 @@ if ($export) {
 
 // Fetch records for the page view.
 $allrecords = $DB->get_records_select(
-    'local_msgraph_api_mailer_log', $wheresql, $params, 'timecreated DESC'
+    'local_msgraph_api_mailer_log',
+    $wheresql,
+    $params,
+    'timecreated DESC'
 );
 
 if ($filterto !== '') {
@@ -174,6 +177,7 @@ foreach ($records as $r) {
 
 // Build template data.
 $templatedata = [
+    'action_url'                    => (new moodle_url($pagepath))->out(false),
     'filter_status_all_selected'    => $filterstatus < 0,
     'filter_status_sent_selected'   => $filterstatus === 1,
     'filter_status_failed_selected' => $filterstatus === 0,

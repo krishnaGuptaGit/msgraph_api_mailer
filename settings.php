@@ -47,14 +47,14 @@ if (!isset($hassiteconfig) || $hassiteconfig) {
     // Live patch status badge — reads the value stored by the after_config hook
     // (which already ran earlier in this same request).
     $patchstatus = get_config('local_msgraph_api_mailer', 'patch_status') ?: 'unknown';
-    $statusmap   = [
-        'ok'             => ['success', 'check-circle'],
-        'reapplied'      => ['warning', 'refresh'],
-        'failed_readonly'=> ['danger',  'times-circle'],
-        'failed_anchor'  => ['danger',  'times-circle'],
-        'failed_unknown' => ['danger',  'times-circle'],
-        'not_readable'   => ['danger',  'times-circle'],
-        'unknown'        => ['info',    'info-circle'],
+    $statusmap = [
+        'ok' => ['success', 'check-circle'],
+        'reapplied' => ['warning', 'refresh'],
+        'failed_readonly' => ['danger', 'times-circle'],
+        'failed_anchor' => ['danger', 'times-circle'],
+        'failed_unknown' => ['danger', 'times-circle'],
+        'not_readable' => ['danger', 'times-circle'],
+        'unknown' => ['info', 'info-circle'],
     ];
     [$alerttype, $icon] = $statusmap[$patchstatus] ?? ['info', 'info-circle'];
     $langkey = array_key_exists($patchstatus, $statusmap) ? 'patch_status_' . $patchstatus : 'patch_status_unknown';

@@ -362,7 +362,7 @@ class graph_client {
             $chunklen = strlen($chunk);
             $end      = $offset + $chunklen - 1;
 
-            // post() is the only public \curl method accepting a raw string body.
+            // Post() is the only public \curl method accepting a raw string body.
             // CURLOPT_CUSTOMREQUEST overrides the HTTP verb to PUT.
             $resp     = $curl->post($uploadurl, $chunk, [
                 'CURLOPT_CUSTOMREQUEST' => 'PUT',
@@ -416,7 +416,7 @@ class graph_client {
             'CURLOPT_HTTPHEADER'    => $headers,
             'CURLOPT_TIMEOUT'       => 60,
         ];
-        // post() is the only public method that accepts a raw string body.
+        // Post() is the only public method that accepts a raw string body.
         // CURLOPT_CUSTOMREQUEST overrides the HTTP verb to GET/POST/DELETE/etc.
         $resp     = $curl->post($url, $body, $options);
         $httpcode = (int) $curl->get_info()['http_code'];

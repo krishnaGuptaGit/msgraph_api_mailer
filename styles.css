@@ -63,9 +63,20 @@
     font-weight: 500;
 }
 
-.config-badge.ok   { background: #d4edda; color: #155724; }
-.config-badge.err  { background: #f8d7da; color: #721c24; }
-.config-badge.warn { background: #fff3cd; color: #856404; }
+.config-badge.ok {
+    background: #d4edda;
+    color: #155724;
+}
+
+.config-badge.err {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.config-badge.warn {
+    background: #fff3cd;
+    color: #856404;
+}
 
 #permission-result,
 #email-result {
@@ -198,6 +209,17 @@
     margin-left: auto;
 }
 
-.cl-type-new      { color: #0078d4; font-weight: 600; }
-.cl-type-fix      { color: #28a745; font-weight: 600; }
-.cl-type-improved { color: #6f42c1; font-weight: 600; }
+.cl-type-new {
+    color: #0078d4;
+    font-weight: 600;
+}
+
+.cl-type-fix {
+    color: #28a745;
+    font-weight: 600;
+}
+
+.cl-type-improved {
+    color: #6f42c1;
+    font-weight: 600;
+}

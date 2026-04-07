@@ -37,7 +37,6 @@ use core_external\external_value;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class send_test_email extends external_api {
-
     /**
      * Describes input parameters.
      *
