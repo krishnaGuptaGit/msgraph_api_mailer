@@ -62,5 +62,10 @@ function xmldb_local_msgraph_api_mailer_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2026040700, 'local', 'msgraph_api_mailer');
     }
 
+    if ($oldversion < 2026040800) {
+        // No DB schema changes — mustache docblock fix and AMD rebuild.
+        upgrade_plugin_savepoint(true, 2026040800, 'local', 'msgraph_api_mailer');
+    }
+
     return true;
 }

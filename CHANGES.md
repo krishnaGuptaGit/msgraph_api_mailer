@@ -5,6 +5,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 ---
 
+## [1.1.8] — 2026-04-08 (version 2026040800)
+
+### Fixed
+- **Mustache docblock format** — merged the two separate `{{! }}` comment blocks (license + `@template`) into one in all three templates (`changelog.mustache`, `email_log.mustache`, `test_validate.mustache`) to resolve prechecker "Example context JSON is unparsable" errors
+- **AMD build files rebuilt** — `amd/build/index.min.js` and `amd/build/tester.min.js` (+ source maps) regenerated from source to clear "uncommitted change detected" prechecker errors
+
+---
+
 ## [1.1.7] — 2026-04-07 (version 2026040700)
 
 ### Fixed

@@ -13,8 +13,7 @@
 
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-}}
-{{!
+
     @template local_msgraph_api_mailer/changelog
 
     Changelog page template for MS Graph API Mailer.
@@ -40,12 +39,41 @@
         </div>
     </div>
 
+    {{! v1.1.8 }}
+    <div class="cl-card">
+        <div class="cl-card-header">
+            <span class="cl-badge-version">v1.1.8</span>
+            <h4>Prechecker Compliance &mdash; Mustache &amp; AMD Rebuild</h4>
+            <span class="cl-badge-latest">Latest</span>
+            <span class="cl-date">2026-04-08</span>
+        </div>
+        <div class="cl-body"><ul>
+            <li>
+                <span class="cl-type-fix">FIX</span>
+                <strong>Mustache docblock format</strong> &mdash;
+                Merged the split license and <code>@template</code> comment blocks into
+                a single <code>{{!&nbsp;}}</code> block in all three templates
+                (<code>changelog.mustache</code>, <code>email_log.mustache</code>,
+                <code>test_validate.mustache</code>) to resolve
+                &ldquo;Example context JSON is unparsable&rdquo; prechecker errors.
+            </li>
+            <li>
+                <span class="cl-type-fix">FIX</span>
+                <strong>AMD build files rebuilt</strong> &mdash;
+                <code>amd/build/index.min.js</code> and
+                <code>amd/build/tester.min.js</code> (plus source maps) regenerated
+                from source to clear &ldquo;uncommitted change detected&rdquo;
+                prechecker errors.
+            </li>
+        </ul></div>
+    </div>
+
     {{! v1.1.7 }}
     <div class="cl-card">
         <div class="cl-card-header">
             <span class="cl-badge-version">v1.1.7</span>
             <h4>Prechecker Compliance &mdash; Array Spacing Fix</h4>
-            <span class="cl-badge-latest">Latest</span>
+            <span class="cl-badge-stable">Stable</span>
             <span class="cl-date">2026-04-07</span>
         </div>
         <div class="cl-body"><ul>
